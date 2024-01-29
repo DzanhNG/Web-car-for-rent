@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from Turo_Crawler import call_Tutor
 
 def validate_date(entry):
     # Validate the date format (DD/MM/YYYY)
@@ -8,23 +9,53 @@ def validate_date(entry):
         messagebox.showerror("Error", "Invalid date format. Please enter DDMMYYYY.")
         entry.delete(0, tk.END)
 
+def format_two_digits(input_number):
+    # Convert the input to an integer
+    input_number = int(input_number)
+    
+    # Ensure the number is within the range [0, 99]
+    formatted_number = max(0, min(input_number, 99))
+    
+    # Convert the formatted number back to a string and add leading zeros if necessary
+    return f"{formatted_number:02d}"
+
 def submit_tutor_web():
     # Function to handle the submission of the tutor web form
     # You can add your logic here to process the input data
-    day_start = entry_day_start.get()
-    month_start = entry_month_start.get()
-    year_start = entry_year_start.get()
+    Day_Start = format_two_digits(entry_day_start.get())
+    Month_Start = format_two_digits(entry_month_start.get())
+    Year_Start = entry_year_start.get()
     
-    day_end = entry_day_end.get()
-    month_end = entry_month_end.get()
-    year_end = entry_year_end.get()
+    Day_End = format_two_digits(entry_day_end.get())
+    Month_End = format_two_digits(entry_month_end.get())
+    Year_End = entry_year_end.get()
 
-    start_date = f"{day_start}/{month_start}/{year_start}"
-    end_date = f"{day_end}/{month_end}/{year_end}"
-
-    print(f"Start Date: {start_date}")
-    print(f"End Date: {end_date}")
     print("Tutor web submitted!")
+    ###MAIN CODE####
+    month_dict = {'01':'Jan', '02':'Feb', '03':'Mar', '04':'Apr', '05':'May', '06':'Jun','07':'Jul', '08':'Aug', '09':'Sep', '10':'Oct', '11':'Nov', '12':'Dec'}
+
+    # Day_Start = '01'
+    # Month_Start = '02'
+    # Year_Start = '2024'
+    Start = 'startDate=' +str(Month_Start) + '%2F' + str(Day_Start) +   '%2F' + str(Year_Start)  ###  month%2F   day%2F    year
+    Savetime_start = month_dict.get(Month_Start) + Day_Start + Year_Start
+
+    # Day_End= '08'
+    # Month_End = '02'
+    # Year_End = '2024'
+    End = 'endDate=' +str(Month_End) + '%2F' + str(Day_End)+   '%2F' + str(Year_End)   ###  month%2F   day%2F    year
+    Savetime_end = month_dict.get(Month_End) + Day_End + Year_End
+
+    Savetime = '_' + Savetime_start + '_' + Savetime_end
+
+    part1 = 'https://turo.com/us/en/search?country=US&defaultZoomLevel=13&deliveryLocationType=city&'
+    part2 = '&endTime=12%3A00&isMapSearch=false&itemsPerPage=200&latitude=33.6832497&location=Irvine%2C%20CA%2092614%2C%20USA&locationType=CITY&longitude=-117.83407349999999&pickupType=ALL&placeId=ChIJGWp61inc3IARB84fEAnUP0U&region=CA&sortType=RELEVANCE&'
+    part3 = '&startTime=11%3A00&useDefaultMaximumDistance=true'
+
+    url = str(part1) + End + part2 + Start + part3
+    print(url)
+    print(call_Tutor(url,Savetime))
+    
 
 # Create the main window
 root = tk.Tk()
@@ -65,9 +96,12 @@ entry_year_end = tk.Entry(root, width=8, validate="key", validatecommand=validat
 entry_year_end.grid(row=1, column=3, pady=5)
 entry_year_end.insert(0, "YYYY")
 
+label_example = tk.Label(root, text="Example: DDMMYYY = 01082024")
+label_example.grid(row=2, column=0, padx=10, pady=5, sticky="e")
+
 # Create and pack a submit button
 submit_button = tk.Button(root, text="Start", command=submit_tutor_web)
-submit_button.grid(row=2, columnspan=4, pady=20)
+submit_button.grid(row=3, columnspan=4, pady=20)
 
 # Start the Tkinter event loop
 root.mainloop()
