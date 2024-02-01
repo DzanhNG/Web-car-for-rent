@@ -4,4 +4,4 @@ Get Vehicle Information of a booking car website, also create an UI for user. Th
 This data is flex data, meaning of when user scroll page, data will appear.
 
 # Output
-<img src="./Images\Output.png" width="400" height="150">
+<img src="./Images\Output.png">
